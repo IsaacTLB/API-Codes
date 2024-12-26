@@ -1,15 +1,18 @@
 # Import dependencies
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import scraper, regex 
-from models.request import ScrapeRequestModel, RegexRequestModel
-from models.response import ScrapeResponseModel, RegexResponseModel
+from routers import scrapers, regex 
+from models.request import ScraperRequest, RegexRequest
+from models.response import ScraperResponse, RegexResponse
 
 # Logger setup function
-from utils.logging_config import setup_logging
+from utils.logging_config import logging, setup_logging
 
 # Initialize FastAPI app
 app = FastAPI()
+
+#configure logging
+setup_logging()
 
 # CORS settings
 origins = [
@@ -26,10 +29,11 @@ app.add_middleware(
 )
 
 # Setup logger
-logger = setup_logging("app_logger")
+logger = logging.getLogger(__name__)
+
 
 # Include routers
-app.include_router(scraper.router, prefix="/scraper", tags=["Scraper"])
+app.include_router(scrapers.router, prefix="/scraper", tags=["Scraper"])
 app.include_router(regex.router, prefix="/regex", tags=["Regex"])
 
 @app.on_event("startup")
